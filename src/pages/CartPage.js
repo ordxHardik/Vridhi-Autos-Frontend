@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Modal, message, Form, Input, Select } from "antd";
 import Spinner from "../components/Spinner";
+import Header from "../components/Header";
 
 const CartPage = () => {
   const [subTotal, setSubTotal] = useState(0);
@@ -77,6 +78,7 @@ const CartPage = () => {
 
   return (
     <>
+      <Header />
       {loading && <Spinner />}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');

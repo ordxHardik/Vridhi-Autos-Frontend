@@ -15,16 +15,38 @@ const DefaultLayout = ({ children }) => {
     const navigate = useNavigate();
     const { cartItems, loading } = useSelector((state) => state.rootReducer);
     const [collapsed, setCollapsed] = useState(false);
+    const [sidebarVisible, setSidebarVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const isLoggedIn = localStorage.getItem("auth");
 
-    const toggle = () => setCollapsed(!collapsed);
+    const toggle = () => {
+        if (isMobile) {
+            setSidebarVisible(!sidebarVisible);
+        } else {
+            setCollapsed(!collapsed);
+        }
+    };
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            if (mobile) {
+                setSidebarVisible(false);
+            } else {
+                setCollapsed(false);
+            }
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
     }, [cartItems]);
 
     return (
-        <Layout style={{ height: "100vh", overflow: "hidden", display: "flex" }}>
+        <Layout style={{ height: "100vh", overflow: "hidden", display: "flex" }} className={isMobile && sidebarVisible ? "mobile-sidebar-visible" : ""}>
             <style>{`
                 * {
                     box-sizing: border-box;
@@ -266,24 +288,87 @@ const DefaultLayout = ({ children }) => {
                     background: #b8e000;
                 }
 
+                /* Mobile sidebar overlay */
+                .mobile-sidebar-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 998;
+                }
+
+                .mobile-sidebar-visible .ant-layout-sider {
+                    position: fixed;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    z-index: 999;
+                    width: 200px !important;
+                }
+
+                .jauter-mobile-toggle {
+                    position: fixed;
+                    bottom: 30px;
+                    right: 20px;
+                    z-index: 1000;
+                    font-size: 24px;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background: #c8f000 !important;
+                    color: #111 !important;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    transition: all 0.3s ease;
+                }
+
+                .jauter-mobile-toggle:hover {
+                    background: #b5e400 !important;
+                    transform: scale(1.1);
+                }
+
                 @media (max-width: 768px) {
                     .jauter-content { margin: 8px !important; padding: 14px !important; }
+
+                    .jauter-sider {
+                        display: none !important;
+                    }
+
+                    .mobile-sidebar-visible .jauter-sider {
+                        display: flex !important;
+                    }
                 }
+
                 @media (max-width: 480px) {
                     .jauter-content { margin: 6px !important; padding: 10px !important; border-radius: 14px !important; }
+                    
+                    .jauter-mobile-toggle {
+                        bottom: 20px;
+                        right: 15px;
+                        width: 45px;
+                        height: 45px;
+                        font-size: 20px;
+                    }
                 }
             `}</style>
 
             {loading && <Spinner />}
 
+            {isMobile && sidebarVisible && <div className="mobile-sidebar-overlay" onClick={() => setSidebarVisible(false)}></div>}
+
             {isLoggedIn && (
                 <Sider
                     trigger={null}
                     collapsible
-                    collapsed={collapsed}
+                    collapsed={isMobile ? false : collapsed}
                     className="jauter-sider"
                     breakpoint="md"
-                    collapsedWidth={80}
+                    collapsedWidth={isMobile ? 0 : 80}
                 >
                     <div className="jauter-sider-logo">
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -295,7 +380,7 @@ const DefaultLayout = ({ children }) => {
                             ) : (
                                 <div className="jauter-sider-logo-collapsed">VA</div>
                             )}
-                            {React.createElement(
+                            {!isMobile && React.createElement(
                                 collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                                 { className: "jauter-trigger", onClick: toggle, style: { marginLeft: collapsed ? '0' : 'auto' } }
                             )}
@@ -317,9 +402,13 @@ const DefaultLayout = ({ children }) => {
                             Logout
                         </Menu.Item>
                     </Menu>
-
-
                 </Sider>
+            )}
+
+            {isMobile && isLoggedIn && (
+                <div className="jauter-mobile-toggle" onClick={toggle}>
+                    {React.createElement(sidebarVisible ? MenuFoldOutlined : MenuUnfoldOutlined)}
+                </div>
             )}
 
             <Layout className="site-layout">

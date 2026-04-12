@@ -31,8 +31,9 @@ const ContactPage = () => {
           /* ===== JAUTER CONTACT PAGE ===== */
           .contact-wrapper {
             background: #f0f0f0;
-            min-height: 100vh;
-            padding: 0 0 40px 0;
+            min-height: auto;
+            width: 100%;
+            padding: 0;
             font-family: 'Inter', sans-serif;
           }
 
@@ -40,6 +41,8 @@ const ContactPage = () => {
             max-width: 750px;
             margin: 0 auto;
             padding: 0 16px;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           /* ── COMPANY INFO SECTION ── */
@@ -52,6 +55,8 @@ const ContactPage = () => {
             box-shadow: 0 8px 24px rgba(200, 240, 0, 0.25);
             position: relative;
             overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           .contact-company-section::before {
@@ -100,11 +105,13 @@ const ContactPage = () => {
             font-size: 16px;
             color: #111;
             font-weight: 600;
+            word-break: break-word;
           }
 
           .contact-info-item .anticon {
             font-size: 20px;
             color: #111;
+            flex-shrink: 0;
           }
 
           /* ── CONTACT FORM SECTION ── */
@@ -113,6 +120,9 @@ const ContactPage = () => {
             border-radius: 24px;
             padding: 32px 28px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 32px;
           }
 
           .contact-form-title {
@@ -150,6 +160,8 @@ const ContactPage = () => {
             padding: 12px 16px !important;
             font-family: 'Inter', sans-serif;
             transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           .contact-form-wrapper .ant-input:focus,
@@ -178,6 +190,7 @@ const ContactPage = () => {
             letter-spacing: 0.5px !important;
             transition: all 0.2s ease !important;
             margin-top: 8px !important;
+            box-sizing: border-box;
           }
 
           .contact-submit-btn:hover {
@@ -191,22 +204,6 @@ const ContactPage = () => {
             transform: translateY(0) !important;
           }
 
-          /* Responsive */
-          @media (max-width: 768px) {
-            .contact-company-section {
-              padding: 32px 20px;
-              margin-bottom: 24px;
-            }
-
-            .contact-company-name {
-              font-size: 26px;
-            }
-
-            .contact-form-section {
-              padding: 24px 20px;
-            }
-          }
-
           /* ── LOCATION SECTION ── */
           .contact-location-section {
             background: #fff;
@@ -214,6 +211,8 @@ const ContactPage = () => {
             padding: 32px 28px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             margin-bottom: 32px;
+            width: 100%;
+            box-sizing: border-box;
           }
 
           .contact-location-title {
@@ -226,62 +225,148 @@ const ContactPage = () => {
 
           .contact-location-map {
             width: 100%;
-            height: 200px;
+            height: 300px;
             border-radius: 16px;
             overflow: hidden;
             border: 2px solid #e8e8e8;
+            box-sizing: border-box;
           }
 
           .contact-location-map iframe {
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
           }
 
+          /* Responsive - Tablet */
           @media (max-width: 768px) {
+            .contact-company-section {
+              padding: 28px 20px;
+              margin-bottom: 24px;
+            }
+
+            .contact-company-name {
+              font-size: 25px;
+            }
+
+            .contact-form-section {
+              padding: 24px 20px;
+            }
+
             .contact-location-section {
               padding: 24px 20px;
             }
 
             .contact-location-map {
-              height: 300px;
+              height: 280px;
+            }
+
+            .contact-container {
+              padding: 0 12px;
             }
           }
 
+          /* Responsive - Mobile */
           @media (max-width: 480px) {
             .contact-company-section {
               padding: 24px 16px;
-              border-radius: 18px;
+              border-radius: 16px;
+              margin-bottom: 20px;
             }
 
             .contact-company-logo {
-              font-size: 40px;
+              font-size: 36px;
             }
 
             .contact-company-name {
-              font-size: 22px;
+              font-size: 20px;
+              margin-bottom: 6px;
+            }
+
+            .contact-company-tagline {
+              font-size: 12px;
+              margin-bottom: 16px;
+            }
+
+            .contact-info-item {
+              font-size: 14px;
+              gap: 8px;
+            }
+
+            .contact-info-item .anticon {
+              font-size: 18px;
             }
 
             .contact-location-section {
               padding: 20px 16px;
-              border-radius: 18px;
+              border-radius: 16px;
+              margin-bottom: 20px;
             }
 
             .contact-location-title {
-              font-size: 20px;
+              font-size: 18px;
+              margin-bottom: 16px;
             }
 
             .contact-location-map {
-              height: 250px;
+              height: 240px;
             }
 
             .contact-form-section {
               padding: 20px 16px;
-              border-radius: 18px;
+              border-radius: 16px;
             }
 
             .contact-form-title {
-              font-size: 20px;
+              font-size: 18px;
+            }
+
+            .contact-form-subtitle {
+              font-size: 12px;
+              margin-bottom: 18px;
+            }
+
+            .contact-form-wrapper .ant-form-item {
+              margin-bottom: 16px;
+            }
+
+            .contact-form-wrapper .ant-form-item-label > label {
+              font-size: 12px;
+            }
+
+            .contact-form-wrapper .ant-input,
+            .contact-form-wrapper .ant-input-textarea > textarea {
+              font-size: 13px !important;
+              padding: 10px 12px !important;
+            }
+
+            .contact-container {
+              padding: 0 8px;
+            }
+
+            .contact-submit-btn {
+              height: 44px !important;
+              font-size: 14px !important;
+            }
+          }
+
+          /* Extra Small Devices */
+          @media (max-width: 360px) {
+            .contact-company-name {
+              font-size: 18px;
+            }
+
+            .contact-form-title {
+              font-size: 16px;
+            }
+
+            .contact-location-title {
+              font-size: 16px;
+            }
+
+            .contact-location-map {
+              height: 200px;
             }
           }
         `}</style>

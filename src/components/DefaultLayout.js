@@ -46,71 +46,66 @@ const DefaultLayout = ({ children }) => {
     }, [cartItems]);
 
     return (
-        <Layout style={{ height: "100vh", overflow: "hidden", display: "flex" }} className={isMobile && sidebarVisible ? "mobile-sidebar-visible" : ""}>
+        <>
             <style>{`
-                * {
-                    box-sizing: border-box;
-                }
-                
+                * { box-sizing: border-box; }
+
+                /* ── RESET: allow page to scroll naturally ── */
                 html, body, #root {
-                    height: 100%;
+                    height: auto;
+                    min-height: 100%;
                     margin: 0;
                     padding: 0;
-                    overflow: hidden;
+                    overflow-x: hidden;
+                    overflow-y: auto;
                 }
 
                 @keyframes fadeSlideIn {
                     from { opacity: 0; transform: translateX(-16px); }
-                    to { opacity: 1; transform: translateX(0); }
+                    to   { opacity: 1; transform: translateX(0); }
                 }
                 @keyframes contentFade {
                     from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
+                    to   { opacity: 1; transform: translateY(0); }
                 }
 
-                /* Main Layout */
-                .site-layout {
+                /* ── OUTER WRAPPER ── */
+                .jauter-outer {
                     display: flex;
-                    flex-direction: column;
-                    height: 100%;
-                    flex: 1;
+                    min-height: 100vh;
+                    background: #f0f0f0;
+                    position: relative;
                 }
 
-                /* Sider */
+                /* ── SIDER ── */
                 .jauter-sider {
                     background: #111111 !important;
                     box-shadow: 2px 0 16px rgba(0,0,0,0.2);
-                    height: 100vh !important;
-                    overflow-y: auto !important;
-                    overflow-x: hidden !important;
+                    /* Fixed on desktop so it doesn't scroll away */
+                    position: sticky;
+                    top: 0;
+                    height: 100vh;
+                    flex-shrink: 0;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    z-index: 100;
                 }
-                .jauter-sider::-webkit-scrollbar {
-                    width: 6px;
-                }
-                .jauter-sider::-webkit-scrollbar-track {
-                    background: #1a1a1a;
-                }
-                .jauter-sider::-webkit-scrollbar-thumb {
-                    background: #c8f000;
-                    border-radius: 3px;
-                }
-                .jauter-sider::-webkit-scrollbar-thumb:hover {
-                    background: #b8e000;
-                }
+                .jauter-sider::-webkit-scrollbar { width: 6px; }
+                .jauter-sider::-webkit-scrollbar-track { background: #1a1a1a; }
+                .jauter-sider::-webkit-scrollbar-thumb { background: #c8f000; border-radius: 3px; }
+                .jauter-sider::-webkit-scrollbar-thumb:hover { background: #b8e000; }
+
                 .jauter-sider .ant-layout-sider-children {
                     background: transparent;
                     display: flex;
                     flex-direction: column;
                     height: 100%;
-                    min-height: 0;
                 }
                 .jauter-sider .ant-menu {
                     background: transparent !important;
                     border: none !important;
                     padding: 0 8px;
                     flex: 1;
-                    overflow-y: auto !important;
-                    overflow-x: hidden !important;
                 }
                 .jauter-sider .ant-menu-item {
                     color: #aaaaaa !important;
@@ -129,12 +124,8 @@ const DefaultLayout = ({ children }) => {
                     background-color: #c8f000 !important;
                     color: #111 !important;
                 }
-                .jauter-sider .ant-menu-item-selected .anticon {
-                    color: #111 !important;
-                }
-                .jauter-sider .ant-menu-item a {
-                    color: inherit !important;
-                }
+                .jauter-sider .ant-menu-item-selected .anticon { color: #111 !important; }
+                .jauter-sider .ant-menu-item a { color: inherit !important; }
                 .jauter-sider .ant-layout-sider-trigger {
                     background: #1e1e1e !important;
                     color: #c8f000 !important;
@@ -189,25 +180,31 @@ const DefaultLayout = ({ children }) => {
                     color: #555;
                     border-top: 1px solid #2a2a2a;
                 }
-                .jauter-sider-footer a {
-                    color: #c8f000;
-                    text-decoration: none;
-                    font-weight: 600;
-                }
-                .jauter-sider-footer a:hover {
-                    text-decoration: underline;
+                .jauter-sider-footer a { color: #c8f000; text-decoration: none; font-weight: 600; }
+                .jauter-sider-footer a:hover { text-decoration: underline; }
+
+                /* ── MAIN COLUMN (right of sider) ── */
+                .jauter-main-col {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 0;
+                    /* NO overflow:hidden — let it grow as tall as content needs */
                 }
 
-                /* Header */
-                .jauter-layout-header {
+                /* ── CONTENT ── */
+                .jauter-content {
                     background: #f0f0f0 !important;
-                    border-bottom: 1px solid #e0e0e0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 0 16px !important;
-                    box-shadow: none;
+                    margin: 16px !important;
+                    padding: 24px 24px 60px !important;
+                    border-radius: 20px !important;
+                    animation: contentFade 0.4s ease;
+                    /* Key fix: no fixed height, no overflow:hidden */
+                    flex: 1;
                 }
+                .jauter-content::-webkit-scrollbar { display: none; }
+
+                /* ── TRIGGER ── */
                 .jauter-trigger {
                     font-size: 18px;
                     color: #111;
@@ -219,98 +216,33 @@ const DefaultLayout = ({ children }) => {
                     align-items: center;
                     background: #c8f000;
                 }
-                .jauter-trigger:hover {
-                    background: #b5e400;
-                    color: #111;
-                }
-                .jauter-cart-wrapper {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: #111;
-                    color: #c8f000;
-                    border-radius: 50px;
-                    padding: 6px 14px;
-                    cursor: pointer;
-                    font-weight: 700;
-                    font-size: 14px;
-                    transition: all 0.2s ease;
-                    position: relative;
-                }
-                .jauter-cart-wrapper:hover {
-                    background: #222;
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                }
-                .jauter-cart-wrapper .anticon {
-                    font-size: 18px;
-                    color: #c8f000 !important;
-                }
-                .jauter-cart-count {
-                    background: #c8f000;
-                    color: #111;
-                    border-radius: 50%;
-                    width: 20px;
-                    height: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 11px;
-                    font-weight: 800;
-                    flex-shrink: 0;
-                }
+                .jauter-trigger:hover { background: #b5e400; }
 
-                /* Content */
-                .jauter-content {
-                    background: #f0f0f0 !important;
-                    margin: 16px !important;
-                    padding: 24px !important;
-                    border-radius: 20px !important;
-                    flex: 1;
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                    animation: contentFade 0.4s ease;
-                    height: 100%;
-                    min-height: 0;
-                }
-                .jauter-content::-webkit-scrollbar {
-                    width: 8px;
-                }
-                .jauter-content::-webkit-scrollbar-track {
-                    background: #e8e8e8;
-                    border-radius: 20px;
-                }
-                .jauter-content::-webkit-scrollbar-thumb {
-                    background: #c8f000;
-                    border-radius: 20px;
-                }
-                .jauter-content::-webkit-scrollbar-thumb:hover {
-                    background: #b8e000;
-                }
-
-                /* Mobile sidebar overlay */
+                /* ── MOBILE OVERLAY ── */
                 .mobile-sidebar-overlay {
                     position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0, 0, 0, 0.5);
+                    inset: 0;
+                    background: rgba(0,0,0,0.5);
                     z-index: 998;
                 }
 
-                .mobile-sidebar-visible .ant-layout-sider {
-                    position: fixed;
-                    left: 0;
+                /* Mobile: sider is fixed overlay, not in flow */
+                .jauter-sider-mobile {
+                    position: fixed !important;
                     top: 0;
+                    left: 0;
                     bottom: 0;
                     z-index: 999;
                     width: 200px !important;
+                    max-width: 200px !important;
+                    height: 100vh !important;
+                    overflow-y: auto;
                 }
 
+                /* Mobile toggle FAB */
                 .jauter-mobile-toggle {
                     position: fixed;
-                    bottom: 30px;
+                    bottom: 80px;
                     right: 20px;
                     z-index: 1000;
                     font-size: 24px;
@@ -323,100 +255,130 @@ const DefaultLayout = ({ children }) => {
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                     transition: all 0.3s ease;
+                    border: none;
                 }
-
-                .jauter-mobile-toggle:hover {
-                    background: #b5e400 !important;
-                    transform: scale(1.1);
-                }
+                .jauter-mobile-toggle:hover { background: #b5e400 !important; transform: scale(1.1); }
 
                 @media (max-width: 768px) {
-                    .jauter-content { margin: 8px !important; padding: 14px !important; }
-
-                    .jauter-sider {
-                        display: none !important;
-                    }
-
-                    .mobile-sidebar-visible .jauter-sider {
-                        display: flex !important;
-                    }
+                    .jauter-content { margin: 8px !important; padding: 14px 14px 50px !important; }
+                }
+                @media (max-width: 480px) {
+                    .jauter-content { margin: 6px !important; padding: 10px 10px 44px !important; border-radius: 14px !important; }
+                    .jauter-mobile-toggle { bottom: 70px; right: 15px; width: 45px; height: 45px; font-size: 20px; }
                 }
 
-                @media (max-width: 480px) {
-                    .jauter-content { margin: 6px !important; padding: 10px !important; border-radius: 14px !important; }
-                    
-                    .jauter-mobile-toggle {
-                        bottom: 20px;
-                        right: 15px;
-                        width: 45px;
-                        height: 45px;
-                        font-size: 20px;
-                    }
+                @media (prefers-reduced-motion: reduce) {
+                    .jauter-content { animation: none; }
                 }
             `}</style>
 
             {loading && <Spinner />}
 
-            {isMobile && sidebarVisible && <div className="mobile-sidebar-overlay" onClick={() => setSidebarVisible(false)}></div>}
+            <div className="jauter-outer">
 
-            {isLoggedIn && (
-                <Sider
-                    trigger={null}
-                    collapsible
-                    collapsed={isMobile ? false : collapsed}
-                    className="jauter-sider"
-                    breakpoint="md"
-                    collapsedWidth={isMobile ? 0 : 80}
-                >
-                    <div className="jauter-sider-logo">
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                            {!collapsed ? (
+                {/* ── DESKTOP SIDER (sticky, in-flow) ── */}
+                {isLoggedIn && !isMobile && (
+                    <Sider
+                        trigger={null}
+                        collapsible
+                        collapsed={collapsed}
+                        className="jauter-sider"
+                        width={200}
+                        collapsedWidth={80}
+                    >
+                        <div className="jauter-sider-logo">
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                                {!collapsed ? (
+                                    <div className="jauter-sider-logo-pill">
+                                        <span className="jauter-sider-logo-dot" />
+                                        Vridhi Autos
+                                    </div>
+                                ) : (
+                                    <div className="jauter-sider-logo-collapsed">VA</div>
+                                )}
+                                {React.createElement(
+                                    collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                                    {
+                                        className: "jauter-trigger",
+                                        onClick: toggle,
+                                        style: { marginLeft: collapsed ? "0" : "auto" },
+                                    }
+                                )}
+                            </div>
+                        </div>
+                        <Menu mode="inline" defaultSelectedKeys={[window.location.pathname]}>
+                            <Menu.Item key="/" icon={<HomeOutlined />}><Link to="/">Home</Link></Menu.Item>
+                            <Menu.Item key="/bills" icon={<CopyOutlined />}><Link to="/bills">Bills</Link></Menu.Item>
+                            <Menu.Item key="/items" icon={<UnorderedListOutlined />}><Link to="/items">Items</Link></Menu.Item>
+                            <Menu.Item key="/customers" icon={<UserOutlined />}><Link to="/customers">Customers</Link></Menu.Item>
+                            <Menu.Item key="/logout" icon={<LogoutOutlined />}
+                                onClick={() => { localStorage.removeItem("auth"); navigate("/login"); }}>
+                                Logout
+                            </Menu.Item>
+                        </Menu>
+                    </Sider>
+                )}
+
+                {/* ── MOBILE SIDER (fixed overlay) ── */}
+                {isLoggedIn && isMobile && sidebarVisible && (
+                    <>
+                        <div className="mobile-sidebar-overlay" onClick={() => setSidebarVisible(false)} />
+                        <Sider
+                            trigger={null}
+                            className="jauter-sider jauter-sider-mobile"
+                            width={200}
+                            collapsedWidth={0}
+                        >
+                            <div className="jauter-sider-logo">
                                 <div className="jauter-sider-logo-pill">
                                     <span className="jauter-sider-logo-dot" />
                                     Vridhi Autos
                                 </div>
-                            ) : (
-                                <div className="jauter-sider-logo-collapsed">VA</div>
-                            )}
-                            {!isMobile && React.createElement(
-                                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                                { className: "jauter-trigger", onClick: toggle, style: { marginLeft: collapsed ? '0' : 'auto' } }
-                            )}
-                        </div>
-                    </div>
+                            </div>
+                            <Menu mode="inline" defaultSelectedKeys={[window.location.pathname]}>
+                                <Menu.Item key="/" icon={<HomeOutlined />}
+                                    onClick={() => setSidebarVisible(false)}>
+                                    <Link to="/">Home</Link>
+                                </Menu.Item>
+                                <Menu.Item key="/bills" icon={<CopyOutlined />}
+                                    onClick={() => setSidebarVisible(false)}>
+                                    <Link to="/bills">Bills</Link>
+                                </Menu.Item>
+                                <Menu.Item key="/items" icon={<UnorderedListOutlined />}
+                                    onClick={() => setSidebarVisible(false)}>
+                                    <Link to="/items">Items</Link>
+                                </Menu.Item>
+                                <Menu.Item key="/customers" icon={<UserOutlined />}
+                                    onClick={() => setSidebarVisible(false)}>
+                                    <Link to="/customers">Customers</Link>
+                                </Menu.Item>
+                                <Menu.Item key="/logout" icon={<LogoutOutlined />}
+                                    onClick={() => { localStorage.removeItem("auth"); navigate("/login"); }}>
+                                    Logout
+                                </Menu.Item>
+                            </Menu>
+                        </Sider>
+                    </>
+                )}
 
-                    <Menu mode="inline" defaultSelectedKeys={[window.location.pathname]}>
-                        <Menu.Item key="/" icon={<HomeOutlined />}><Link to="/">Home</Link></Menu.Item>
-                        <Menu.Item key="/bills" icon={<CopyOutlined />}><Link to="/bills">Bills</Link></Menu.Item>
-                        <Menu.Item key="/items" icon={<UnorderedListOutlined />}><Link to="/items">Items</Link></Menu.Item>
-                        <Menu.Item key="/customers" icon={<UserOutlined />}><Link to="/customers">Customers</Link></Menu.Item>
-                        {/* <Menu.Item key="/dev" icon={<GithubOutlined />}>
-                            <a href="https://github.com/ishanaudichya/business-erp-mern" target="_blank" rel="noopener noreferrer">
-                                Git Repo
-                            </a>
-                        </Menu.Item> */}
-                        <Menu.Item key="/logout" icon={<LogoutOutlined />}
-                            onClick={() => { localStorage.removeItem("auth"); navigate("/login"); }}>
-                            Logout
-                        </Menu.Item>
-                    </Menu>
-                </Sider>
-            )}
-
-            {isMobile && isLoggedIn && (
-                <div className="jauter-mobile-toggle" onClick={toggle}>
-                    {React.createElement(sidebarVisible ? MenuFoldOutlined : MenuUnfoldOutlined)}
+                {/* ── MAIN CONTENT COLUMN ── */}
+                <div className="jauter-main-col">
+                    <Content className="jauter-content">
+                        {children}
+                    </Content>
                 </div>
-            )}
 
-            <Layout className="site-layout">
-                <Content className="jauter-content">
-                    {children}
-                </Content>
-            </Layout>
-        </Layout>
+            </div>
+
+            {/* Mobile FAB toggle */}
+            {isMobile && isLoggedIn && (
+                <button className="jauter-mobile-toggle" onClick={toggle}>
+                    {React.createElement(sidebarVisible ? MenuFoldOutlined : MenuUnfoldOutlined)}
+                </button>
+            )}
+        </>
     );
 };
 
